@@ -6,6 +6,7 @@ import { env } from "./config/env.js";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 import { catalogRoutes } from "./routes/catalogRoutes.js";
 import { healthRoutes } from "./routes/healthRoutes.js";
+import { learningRoutes } from "./routes/learningRoutes.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 
 app.use("/health", healthRoutes);
 app.use("/api", catalogRoutes);
+app.use("/api", learningRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

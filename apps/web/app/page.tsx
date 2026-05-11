@@ -1,56 +1,60 @@
-import { languages, productStages } from "@yapper/shared";
-
-function Badge({ children }: { children: React.ReactNode }) {
-  return <span style={{ alignSelf: "flex-start", borderRadius: 999, background: "#fef3c7", color: "#78350f", padding: "6px 12px", fontSize: 13, fontWeight: 700 }}>{children}</span>;
-}
-
-function Button({ children, variant = "primary" }: { children: React.ReactNode; variant?: "primary" | "secondary" }) {
-  return <button style={{ border: variant === "primary" ? "0" : "1px solid #e2e8f0", borderRadius: 999, background: variant === "primary" ? "#020617" : "white", color: variant === "primary" ? "white" : "#020617", padding: "12px 20px", fontWeight: 700 }}>{children}</button>;
-}
-
-function Card({ children }: { children: React.ReactNode }) {
-  return <section style={{ border: "1px solid #e2e8f0", borderRadius: 24, background: "white", padding: 24, boxShadow: "0 1px 2px rgb(15 23 42 / 0.06)" }}>{children}</section>;
-}
+import Link from "next/link";
+import { languages, productStages, seedRecommendations } from "@yapper/shared";
 
 export default function HomePage() {
   const mvpLanguages = Object.values(languages).filter((language) => language.launchTier === "mvp");
 
   return (
-    <main style={{ maxWidth: 1120, margin: "0 auto", padding: "48px 24px" }}>
-      <section style={{ display: "grid", gap: 24 }}>
-        <Badge>Immersion-first language learning</Badge>
-        <h1 style={{ maxWidth: 780, fontSize: 64, lineHeight: 1, letterSpacing: "-0.05em", margin: 0 }}>
-          Learn languages the way humans naturally learn them.
-        </h1>
-        <p style={{ maxWidth: 680, color: "#475569", fontSize: 20, lineHeight: 1.6 }}>
+    <main className="page">
+      <nav className="nav">
+        <Link className="logo" href="/">Yapper</Link>
+        <div className="navLinks">
+          <Link href="/languages">Languages</Link>
+          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/onboarding">Start</Link>
+        </div>
+      </nav>
+
+      <section className="stack">
+        <span className="badge">Immersion-first language learning</span>
+        <h1 className="heroTitle">Learn languages the way humans naturally learn them.</h1>
+        <p className="lead">
           Yapper starts with context-rich immersion, then builds sounds, vocabulary, simple sentences, dictionary skills, and comprehension.
         </p>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-          <Button>Start learning</Button>
-          <Button variant="secondary">Explore languages</Button>
+        <div className="row">
+          <Link className="button" href="/onboarding">Start onboarding</Link>
+          <Link className="button secondary" href="/languages">Explore languages</Link>
         </div>
       </section>
 
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginTop: 56 }}>
+      <section className="grid" style={{ marginTop: 56 }}>
         {productStages.slice(0, 5).map((stage) => (
-          <Card key={stage.slug}>
-            <p style={{ margin: 0, color: "#64748b", fontSize: 13 }}>Step {stage.userStep}</p>
-            <h2 style={{ margin: "8px 0", fontSize: 20 }}>{stage.label}</h2>
-            <p style={{ margin: 0, color: "#475569", lineHeight: 1.5 }}>{stage.purpose}</p>
-          </Card>
+          <section className="card" key={stage.slug}>
+            <p className="kicker">Step {stage.userStep}</p>
+            <h2>{stage.label}</h2>
+            <p className="muted">{stage.purpose}</p>
+          </section>
         ))}
       </section>
 
-      <section style={{ marginTop: 56 }}>
-        <h2>Launch languages</h2>
-        <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-          {mvpLanguages.map((language) => (
-            <Card key={language.code}>
-              <strong>{language.englishName}</strong>
-              <p style={{ margin: "4px 0 0", color: "#64748b" }}>{language.nativeName}</p>
-            </Card>
-          ))}
-        </div>
+      <section className="twoGrid" style={{ marginTop: 56 }}>
+        <section className="card">
+          <p className="kicker">Phase 1 is live</p>
+          <h2>Try the first learner loop</h2>
+          <p className="muted">Choose a language, get placed into the first stage, open your dashboard, and complete a seed immersion/vocabulary lesson.</p>
+          <div className="row">
+            {mvpLanguages.map((language) => (
+              <Link className="button ghost" key={language.code} href={`/dashboard?language=${language.code}`}>
+                {language.englishName}
+              </Link>
+            ))}
+          </div>
+        </section>
+        <section className="card">
+          <p className="kicker">Media angle</p>
+          <h2>{seedRecommendations[0]?.title}</h2>
+          <p className="muted">{seedRecommendations[0]?.reason}</p>
+        </section>
       </section>
     </main>
   );

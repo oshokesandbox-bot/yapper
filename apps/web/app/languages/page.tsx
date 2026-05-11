@@ -1,22 +1,29 @@
-import { languages } from "@yapper/shared";
-
-function Card({ children }: { children: React.ReactNode }) {
-  return <section style={{ border: "1px solid #e2e8f0", borderRadius: 24, background: "white", padding: 24 }}>{children}</section>;
-}
+import Link from "next/link";
+import { languages, lessonsForLanguage, recommendationsForLanguage } from "@yapper/shared";
 
 export default function LanguagesPage() {
   return (
-    <main style={{ maxWidth: 960, margin: "0 auto", padding: 32 }}>
-      <h1>Languages</h1>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+    <main className="page">
+      <nav className="nav">
+        <Link className="logo" href="/">Yapper</Link>
+        <div className="navLinks"><Link href="/onboarding">Start</Link><Link href="/dashboard">Dashboard</Link></div>
+      </nav>
+      <section className="stack">
+        <span className="badge">Choose your target language</span>
+        <h1 className="heroTitle">Five languages, one acquisition path.</h1>
+        <p className="lead">Spanish, French, and English have full Phase 1 tracks. German and Russian are wired as seed tracks so the product supports all five from the start.</p>
+      </section>
+      <section className="grid" style={{ marginTop: 40 }}>
         {Object.values(languages).map((language) => (
-          <Card key={language.code}>
+          <section className="card" key={language.code}>
+            <p className="kicker">{language.launchTier === "mvp" ? "MVP track" : "Seed track"}</p>
             <h2>{language.englishName}</h2>
-            <p>{language.nativeName}</p>
-            <p>{language.launchTier === "mvp" ? "MVP content track" : "Seed/demo content first"}</p>
-          </Card>
+            <p className="muted">{language.nativeName} · {language.script} script</p>
+            <p>{lessonsForLanguage(language.code).length} seed lessons · {recommendationsForLanguage(language.code).length} media recommendation</p>
+            <Link className="button" href={`/dashboard?language=${language.code}`}>Open track</Link>
+          </section>
         ))}
-      </div>
+      </section>
     </main>
   );
 }

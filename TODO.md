@@ -18,3 +18,12 @@
 - [x] Document Vercel project settings
 - [x] Verify admin build creates `apps/admin/.next`
 - [x] Run web build and full typecheck
+
+## 2026-05-11 Task: Yapper Phase 1 learner loop
+- [x] Add shared seed lessons and media recommendations
+- [x] Add API endpoints for lessons, recommendations, and Phase 1 catalog
+- [x] Build onboarding/placement flow
+- [x] Build learner dashboard with language switching
+- [x] Build lesson player for immersion, vocabulary, stories, and quiz steps
+- [x] Update admin dashboard/content views with seed catalog
+- [x] Verify typecheck, builds, and API endpoints
