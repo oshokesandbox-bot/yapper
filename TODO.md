@@ -11,3 +11,10 @@
 - [x] Install dependencies and run full typecheck
 - [ ] Add auth implementation
 - [ ] Add initial lesson/player data model implementation
+
+## 2026-05-11 Task: Fix Vercel monorepo deploy config
+- [x] Add explicit `apps/admin/vercel.json`
+- [x] Add explicit `apps/web/vercel.json`
+- [x] Document Vercel project settings
+- [x] Verify admin build creates `apps/admin/.next`
+- [x] Run web build and full typecheck

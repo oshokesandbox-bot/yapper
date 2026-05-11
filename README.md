@@ -26,9 +26,25 @@ Scaffolded to match the approved MVP plan and the Digitic-inspired separation: b
 
 Deploy `apps/web` to Vercel as the learner-facing app.
 
+Recommended Vercel settings:
+
+- Root Directory: `apps/web`
+- Framework Preset: Next.js
+- Install Command: configured in `apps/web/vercel.json`
+- Build Command: configured in `apps/web/vercel.json`
+- Output Directory: `.next`
+
 ### Admin app
 
-Deploy `apps/admin` to Vercel as a separate project when needed.
+Deploy `apps/admin` to Vercel as a separate project.
+
+Recommended Vercel settings:
+
+- Root Directory: `apps/admin`
+- Framework Preset: Next.js
+- Install Command: configured in `apps/admin/vercel.json`
+- Build Command: configured in `apps/admin/vercel.json`
+- Output Directory: `.next`
 
 ### API
 
