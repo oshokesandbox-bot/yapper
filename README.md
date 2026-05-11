@@ -19,3 +19,25 @@ Language learning through guided immersion, literacy, simple production, diction
 ## Phase 0
 
 Scaffolded to match the approved MVP plan and the Digitic-inspired separation: backend API, learner app, admin dashboard, and shared domain packages.
+
+## Deployment
+
+### Web app
+
+Deploy `apps/web` to Vercel as the learner-facing app.
+
+### Admin app
+
+Deploy `apps/admin` to Vercel as a separate project when needed.
+
+### API
+
+Deploy the API to Render with:
+
+- Build command: `pnpm install --frozen-lockfile && pnpm --filter @yapper/api build`
+- Start command: `pnpm --filter @yapper/api start`
+- Environment variables:
+  - `NODE_ENV=production`
+  - `DATABASE_URL=<Neon connection string>`
+
+Render supplies `PORT` automatically; the API reads it from the environment.

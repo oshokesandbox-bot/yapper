@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: yapper-api
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @yapper/api build
+    startCommand: pnpm --filter @yapper/api start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
