@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum LanguageCode {
+  EN
+  FR
+  ES
+  DE
+  RU
+}
+
+enum LaunchTier {
+  MVP
+  SEED
+}
+
+enum LessonStatus {
+  DRAFT
+  IN_REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ContentKind {
+  MOVIE_RECOMMENDATION
+  MICRO_STORY
+  DIALOGUE
+  VOCABULARY_CARD
+  MINIMAL_PAIR
+  SENTENCE_PROMPT
+  COMPREHENSION_QUESTION
+  COMPOSITION_PROMPT
+}
+
+model User {
+  id             String   @id @default(cuid())
+  email          String   @unique
+  displayName    String?
+  nativeLanguage LanguageCode?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  progresses UserLanguageProgress[]
+}
+
+model Language {
+  code        LanguageCode @id
+  englishName String
+  nativeName  String
+  launchTier  LaunchTier
+  script      String
+  isActive    Boolean      @default(true)
+
+  lessons Lesson[]
+}
+
+model Stage {
+  id       Int     @id
+  slug     String  @unique
+  label    String
+  userStep Int
+  purpose  String
+  isMvp    Boolean @default(false)
+
+  lessons    Lesson[]
+  progresses UserLanguageProgress[]
+}
+
+model UserLanguageProgress {
+  id             String       @id @default(cuid())
+  userId         String
+  language       LanguageCode
+  currentStageId Int
+  stageProgress  Float        @default(0)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  user         User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentStage Stage @relation(fields: [currentStageId], references: [id])
+
+  @@unique([userId, language])
+  @@index([language, currentStageId])
+}
+
+model Lesson {
+  id          String       @id @default(cuid())
+  language    LanguageCode
+  stageId     Int
+  title       String
+  description String?
+  status      LessonStatus @default(DRAFT)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  stage    Stage    @relation(fields: [stageId], references: [id])
+  languageRef Language @relation(fields: [language], references: [code])
+  steps    LessonStep[]
+}
+
+model LessonStep {
+  id        String      @id @default(cuid())
+  lessonId  String
+  order     Int
+  kind      ContentKind
+  payload   Json
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([lessonId, order])
+}
+
+model MediaRecommendation {
+  id           String       @id @default(cuid())
+  language     LanguageCode
+  title        String
+  mediaType    String
+  reason       String
+  affiliateUrl String?
+  stageHintId  Int?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model AiGeneration {
+  id          String      @id @default(cuid())
+  language    LanguageCode
+  stageSlug   String
+  kind        ContentKind
+  prompt      String
+  output      Json
+  reviewState String      @default("pending")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}

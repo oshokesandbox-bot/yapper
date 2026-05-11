@@ -1,0 +1,24 @@
+{
+  "name": "yapper",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.33.2",
+  "scripts": {
+    "dev": "turbo dev",
+    "build": "turbo build",
+    "typecheck": "turbo typecheck",
+    "lint": "turbo lint",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "5.7.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "typescript": "5.7.2"
+    }
+  }
+}
