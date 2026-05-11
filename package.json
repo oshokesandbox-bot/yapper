@@ -19,6 +19,13 @@
   "pnpm": {
     "overrides": {
       "typescript": "5.7.2"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild",
+      "sharp"
+    ]
   }
 }

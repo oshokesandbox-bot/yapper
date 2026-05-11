@@ -5,39 +5,39 @@ export default function AdminHome() {
   const seedOnlyLessons = seedLessons.filter((lesson) => lesson.status === "seed");
 
   return (
-    <main style={{ maxWidth: 1120, margin: "0 auto", padding: 32 }}>
-      <p style={{ color: "#38bdf8", fontWeight: 700 }}>Yapper Admin</p>
-      <h1 style={{ fontSize: 48, margin: 0 }}>Content operations dashboard</h1>
-      <p style={{ color: "#94a3b8", fontSize: 18 }}>Phase 1 now has seed learning content, lesson tracks, and media recommendations wired into the shared catalog.</p>
+    <main className="mx-auto max-w-5xl px-8 py-8">
+      <p className="text-sky-400 font-bold">Yapper Admin</p>
+      <h1 className="text-5xl m-0 font-semibold">Content operations dashboard</h1>
+      <p className="text-slate-400 text-lg">Phase 1 now has seed learning content, lesson tracks, and media recommendations wired into the shared catalog.</p>
 
-      <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16, marginTop: 32 }}>
-        <div style={{ border: "1px solid #334155", borderRadius: 24, padding: 24 }}>
-          <strong>Languages</strong>
-          <p>{Object.keys(languages).length} configured</p>
+      <section className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-4 mt-8">
+        <div className="border border-slate-700 rounded-3xl p-6">
+          <strong className="text-lg">Languages</strong>
+          <p className="text-slate-400 mt-1">{Object.keys(languages).length} configured</p>
         </div>
-        <div style={{ border: "1px solid #334155", borderRadius: 24, padding: 24 }}>
-          <strong>Product stages</strong>
-          <p>{productStages.length} configured</p>
+        <div className="border border-slate-700 rounded-3xl p-6">
+          <strong className="text-lg">Product stages</strong>
+          <p className="text-slate-400 mt-1">{productStages.length} configured</p>
         </div>
-        <div style={{ border: "1px solid #334155", borderRadius: 24, padding: 24 }}>
-          <strong>Lessons</strong>
-          <p>{publishedLessons.length} published · {seedOnlyLessons.length} seed</p>
+        <div className="border border-slate-700 rounded-3xl p-6">
+          <strong className="text-lg">Lessons</strong>
+          <p className="text-slate-400 mt-1">{publishedLessons.length} published &middot; {seedOnlyLessons.length} seed</p>
         </div>
-        <div style={{ border: "1px solid #334155", borderRadius: 24, padding: 24 }}>
-          <strong>Recommendations</strong>
-          <p>{seedRecommendations.length} media items</p>
+        <div className="border border-slate-700 rounded-3xl p-6">
+          <strong className="text-lg">Recommendations</strong>
+          <p className="text-slate-400 mt-1">{seedRecommendations.length} media items</p>
         </div>
       </section>
 
-      <section style={{ marginTop: 32, display: "grid", gap: 12 }}>
-        <h2>Seed lesson catalog</h2>
+      <section className="mt-8 grid gap-3">
+        <h2 className="text-2xl font-semibold">Seed lesson catalog</h2>
         {seedLessons.map((lesson) => (
-          <div key={lesson.id} style={{ border: "1px solid #334155", borderRadius: 18, padding: 18, display: "flex", justifyContent: "space-between", gap: 16 }}>
+          <div key={lesson.id} className="border border-slate-700 rounded-2xl p-4 flex justify-between gap-4 items-start">
             <div>
               <strong>{lesson.title}</strong>
-              <p style={{ color: "#94a3b8", margin: "6px 0 0" }}>{lesson.language.toUpperCase()} · {lesson.stageSlug} · {lesson.steps.length} steps</p>
+              <p className="text-slate-400 text-sm mt-1">{lesson.language.toUpperCase()} &middot; {lesson.stageSlug} &middot; {lesson.steps.length} steps</p>
             </div>
-            <span style={{ color: lesson.status === "published" ? "#86efac" : "#fbbf24" }}>{lesson.status}</span>
+            <span className={lesson.status === "published" ? "text-green-300" : "text-amber-300"}>{lesson.status}</span>
           </div>
         ))}
       </section>

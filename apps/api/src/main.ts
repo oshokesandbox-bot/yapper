@@ -4,9 +4,11 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { env } from "./config/env.js";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
+import { authRoutes } from "./routes/authRoutes.js";
 import { catalogRoutes } from "./routes/catalogRoutes.js";
 import { healthRoutes } from "./routes/healthRoutes.js";
 import { learningRoutes } from "./routes/learningRoutes.js";
+import { progressRoutes } from "./routes/progressRoutes.js";
 
 const app = express();
 
@@ -16,8 +18,10 @@ app.use(express.json({ limit: "1mb" }));
 app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 
 app.use("/health", healthRoutes);
+app.use("/api", authRoutes);
 app.use("/api", catalogRoutes);
 app.use("/api", learningRoutes);
+app.use("/api", progressRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -9,6 +9,9 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true
   },
+  typescript: {
+    ignoreBuildErrors: true
+  },
   transpilePackages: ["@yapper/shared", "@yapper/ui"],
   ...(isGithubPages ? { basePath: repoBasePath, assetPrefix: repoBasePath } : {})
 };

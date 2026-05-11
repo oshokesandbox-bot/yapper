@@ -10,11 +10,14 @@
     "lint": "next lint || tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
     "@yapper/shared": "workspace:*",
     "@yapper/ui": "workspace:*",
+    "framer-motion": "^12.38.0",
     "next": "^15.1.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.3.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
