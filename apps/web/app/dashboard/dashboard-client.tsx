@@ -118,9 +118,17 @@ export function DashboardClient() {
 
         <aside className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm grid gap-4">
           <p className="text-blue-600 font-black uppercase tracking-widest text-xs">Today&rsquo;s immersion</p>
-          <h2 className="text-2xl font-semibold">{recommendations[0]?.title}</h2>
-          <p className="text-slate-400 text-sm">{recommendations[0]?.reason}</p>
-          <p className="text-sm"><strong>Challenge:</strong> {recommendations[0]?.challenge}</p>
+          {recommendations[0] ? (
+            <>
+              <h2 className="text-2xl font-semibold">{recommendations[0].title}</h2>
+              <p className="text-slate-400 text-sm">{recommendations[0].reason}</p>
+              <p className="text-sm"><strong>Challenge:</strong> {recommendations[0].challenge}</p>
+              <Link href={`/recommendations/${recommendations[0].id}`} className="inline-flex items-center justify-center h-10 px-5 rounded-full bg-slate-950 text-white text-sm font-semibold hover:bg-slate-800 self-start">Start immersion</Link>
+            </>
+          ) : (
+            <p className="text-slate-400 text-sm">No recommendations available for this language yet.</p>
+          )}
+          <Link href={`/recommendations?language=${selectedLanguage}`} className="text-sm text-blue-600 hover:underline">Find more media &rarr;</Link>
         </aside>
       </div>
 

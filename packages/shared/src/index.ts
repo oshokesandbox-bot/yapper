@@ -154,11 +154,13 @@ export type MediaRecommendation = {
   id: string;
   language: LanguageCode;
   title: string;
-  mediaType: "movie" | "series" | "book" | "music";
+  mediaType: "movie" | "series" | "book" | "music" | "podcast";
   stageSlug: StageSlug;
   reason: string;
   challenge: string;
   affiliateUrl?: string;
+  stageHintId?: number;
+  watchUrl?: string;
 };
 
 // ── Base content for lesson 1 of each category ──
@@ -1267,11 +1269,36 @@ const literacyLessons: Lesson[] = languageCodes.flatMap((language): Lesson[] => 
 export const allSeedLessons: Lesson[] = [...seedLessons, ...literacyLessons];
 
 export const seedRecommendations: MediaRecommendation[] = [
-  { id: "es-coco", language: "es", title: "Coco", mediaType: "movie", stageSlug: "immersion", reason: "Strong visual storytelling and culturally relevant Spanish-language music/context.", challenge: "Watch one musical scene in Spanish with no subtitles, then describe the mood in one sentence." },
-  { id: "fr-amelie", language: "fr", title: "Amélie", mediaType: "movie", stageSlug: "immersion", reason: "Iconic French cultural reference with expressive visual scenes.", challenge: "Watch a short café or street scene with no subtitles and identify the social situation." },
-  { id: "en-paddington", language: "en", title: "Paddington", mediaType: "movie", stageSlug: "immersion", reason: "Clear family-friendly context, expressive scenes, and accessible everyday English.", challenge: "Watch a scene and list three actions you understood visually." },
-  { id: "de-goodbye-lenin", language: "de", title: "Good Bye, Lenin!", mediaType: "movie", stageSlug: "immersion", reason: "Socially relevant German film with strong cultural context.", challenge: "Watch a short scene and focus only on greetings and emotional tone." },
-  { id: "ru-cheburashka", language: "ru", title: "Cheburashka", mediaType: "movie", stageSlug: "immersion", reason: "Culturally familiar Russian media with visual humor and simple emotional cues.", challenge: "Watch a short clip and notice repeated sounds, names, and Cyrillic shapes." }
+  { id: "es-coco", language: "es", title: "Coco", mediaType: "movie", stageSlug: "immersion", reason: "Strong visual storytelling and culturally relevant Spanish-language music/context.", challenge: "Watch one musical scene in Spanish with no subtitles, then describe the mood in one sentence.", affiliateUrl: "https://www.disneyplus.com/movies/coco", stageHintId: 1 },
+  { id: "fr-amelie", language: "fr", title: "Amélie", mediaType: "movie", stageSlug: "immersion", reason: "Iconic French cultural reference with expressive visual scenes.", challenge: "Watch a short café or street scene with no subtitles and identify the social situation.", affiliateUrl: "https://www.amazon.com/Amelie-Audrey-Tautou/dp/B0000AQS0F" },
+  { id: "en-paddington", language: "en", title: "Paddington", mediaType: "movie", stageSlug: "immersion", reason: "Clear family-friendly context, expressive scenes, and accessible everyday English.", challenge: "Watch a scene and list three actions you understood visually.", affiliateUrl: "https://www.amazon.com/Paddington-Hugh-Bonneville/dp/B00N3RFMH6" },
+  { id: "de-goodbye-lenin", language: "de", title: "Good Bye, Lenin!", mediaType: "movie", stageSlug: "immersion", reason: "Socially relevant German film with strong cultural context.", challenge: "Watch a short scene and focus only on greetings and emotional tone.", affiliateUrl: "https://www.amazon.com/Good-Bye-Lenin-Daniel-Bruhl/dp/B0000AQS0G" },
+  { id: "ru-cheburashka", language: "ru", title: "Cheburashka", mediaType: "movie", stageSlug: "immersion", reason: "Culturally familiar Russian media with visual humor and simple emotional cues.", challenge: "Watch a short clip and notice repeated sounds, names, and Cyrillic shapes." },
+  // ── Expanded Spanish recommendations ──
+  { id: "es-romancero", language: "es", title: "El Romancero Gitano", mediaType: "book", stageSlug: "immersion", reason: "Poetry with strong rhythm and repeated refrains — great for musical ear training in Spanish.", challenge: "Read one poem aloud and notice repeated vowel patterns.", affiliateUrl: "https://www.amazon.com/Romancero-gitano-Federico-Garcia-Lorca/dp/8420674127" },
+  { id: "es-nadie-es-perfecto", language: "es", title: "Nadie es perfecto (Podcast)", mediaType: "podcast", stageSlug: "immersion", reason: "Clear conversational Spanish with both native and learner speakers — natural dialogue cadence.", challenge: "Listen to the first 5 minutes and write down 3 words you heard more than once." },
+  { id: "es-luis-fonsi", language: "es", title: "Despacito — Luis Fonsi", mediaType: "music", stageSlug: "immersion", reason: "Ubiquitous pop song with clear, repetitive lyrics and a slow chorus.", challenge: "Listen without subtitles and identify the chorus phrase that repeats most.", affiliateUrl: "https://www.youtube.com/playlist?list=PLSzYqkXKjK4Jr1Kj6d8fXq7Ql7Z7Z7Z7Z" },
+  { id: "es-el-laberinto", language: "es", title: "El Laberinto del Fauno", mediaType: "movie", stageSlug: "immersion", reason: "Spanish-language fantasy with strong visual narrative, making it easier to infer meaning.", challenge: "Watch a 5-minute scene and identify the emotional tone of each character exchange." },
+  // ── Expanded French recommendations ──
+  { id: "fr-intouchables", language: "fr", title: "Les Intouchables", mediaType: "movie", stageSlug: "immersion", reason: "Modern French classic with natural dialogue, humor, and strong non-verbal cues.", challenge: "Watch the opening 10 minutes and describe the relationship dynamic between the two characters.", affiliateUrl: "https://www.amazon.com/Intouchables-Omar-Sy/dp/B007VBJEGU" },
+  { id: "fr-inner-french", language: "fr", title: "InnerFrench (Podcast)", mediaType: "podcast", stageSlug: "immersion", reason: "Deliberately slow, clear French with cultural topics — perfect for building listening stamina.", challenge: "Listen to one episode without pausing and note every moment you understood a full sentence." },
+  { id: "fr-kaamelott", language: "fr", title: "Kaamelott — Livre I", mediaType: "series", stageSlug: "immersion", reason: "Cult French comedy series with short episodes, exaggerated acting, and repetitive situational humor.", challenge: "Watch one short episode and identify the running joke from visual cues alone." },
+  { id: "fr-stromae", language: "fr", title: "Stromae — Tous les mêmes", mediaType: "music", stageSlug: "immersion", reason: "Electro-pop with clear French lyrics and a music video that reinforces meaning through visuals.", challenge: "Watch the music video and write down three emotion words the song conveys." },
+  // ── Expanded English recommendations ──
+  { id: "en-bbc-6min", language: "en", title: "BBC 6 Minute English", mediaType: "podcast", stageSlug: "immersion", reason: "Short, scripted conversations on accessible topics with vocabulary breakdowns built in.", challenge: "Listen to one episode and repeat each key phrase out loud after hearing it." },
+  { id: "en-disney-basics", language: "en", title: "Disney Nature — Penguins", mediaType: "movie", stageSlug: "immersion", reason: "Narrated nature documentary with slow, clear English narration and predictable sentence patterns.", challenge: "Watch 5 minutes and count how many times the narrator uses a present-tense verb.", affiliateUrl: "https://www.disneyplus.com/movies/disney-nature-penguins" },
+  { id: "en-the-economist", language: "en", title: "The Economist Espresso", mediaType: "book", stageSlug: "immersion", reason: "Concise daily briefing with rich vocabulary in short, digestible paragraphs.", challenge: "Read one briefing and underline every adjective you understand in context." },
+  { id: "en-queen", language: "en", title: "Queen — Bohemian Rhapsody", mediaType: "music", stageSlug: "immersion", reason: "Iconic song with varied vocal delivery, clear English phrases, and a story-driven structure.", challenge: "Listen and write down the first sentence that paints a vivid mental picture." },
+  // ── Expanded German recommendations ──
+  { id: "de-nicos-weg", language: "de", title: "Nicos Weg — Deutsche Welle", mediaType: "series", stageSlug: "immersion", reason: "Free, graded video series designed for German learners — scaffolded from A1.", challenge: "Watch the A1 episode and list every time you hear 'und' or 'ja'.", affiliateUrl: "https://learngerman.dw.com/en/course/nicos-weg/" },
+  { id: "de-slow-german", language: "de", title: "Slow German (Podcast)", mediaType: "podcast", stageSlug: "immersion", reason: "Deliberately paced German podcast with transcripts and cultural topics.", challenge: "Listen to one episode at normal speed first, then read the transcript after." },
+  { id: "de-rammstein", language: "de", title: "Rammstein — Sonne", mediaType: "music", stageSlug: "immersion", reason: "Slow, heavy articulation makes each word distinct — surprisingly accessible for listening practice.", challenge: "Listen to the chorus and write down every word you can identify." },
+  { id: "de-lola-rennt", language: "de", title: "Lola rennt (Run Lola Run)", mediaType: "movie", stageSlug: "immersion", reason: "Fast-paced but highly visual German film with repeated scenes — great for pattern recognition.", challenge: "Watch the first sequence and identify the sound that signals something important." },
+  // ── Expanded Russian recommendations ──
+  { id: "ru-russian-podcast", language: "ru", title: "Russian Podcast for Beginners", mediaType: "podcast", stageSlug: "immersion", reason: "Slow, simplified Russian with clear topic framing and repetition.", challenge: "Listen to the first 3 minutes and write down all the words you recognize from visual context alone." },
+  { id: "ru-nu-pogodi", language: "ru", title: "Nu, Pogodi! (Ну, погоди!)", mediaType: "series", stageSlug: "immersion", reason: "Beloved Russian cartoon with minimal dialogue and exaggerated physical comedy.", challenge: "Watch one episode without subtitles and describe what happened using just gestures." },
+  { id: "ru-kalinka", language: "ru", title: "Kalinka — Ivan Larionov", mediaType: "music", stageSlug: "immersion", reason: "Classic Russian folk song with a repetitive chorus that drills core vowel sounds.", challenge: "Try to sing the chorus and count how many times the title word appears." },
+  { id: "ru-moskva-slezam", language: "ru", title: "Москва слезам не верит", mediaType: "movie", stageSlug: "immersion", reason: "Iconic Soviet film with clear emotional cues and strong visual storytelling.", challenge: "Watch a 5-minute scene and describe the characters' relationships from body language." }
 ];
 
 export function lessonsForLanguage(language: LanguageCode) {
@@ -1285,3 +1312,17 @@ export function recommendationsForLanguage(language: LanguageCode) {
 export function getLessonById(id: string) {
   return allSeedLessons.find((lesson) => lesson.id === id);
 }
+
+export function getRecommendationById(id: string) {
+  return seedRecommendations.find((rec) => rec.id === id);
+}
+
+export type ImmersionSession = {
+  recommendationId: string;
+  notes: string;
+  reflections: string[];
+  language: LanguageCode;
+};
+
+export * from "./auth";
+export * from "./api-client";

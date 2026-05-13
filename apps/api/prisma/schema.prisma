@@ -38,16 +38,43 @@ enum ContentKind {
   COMPOSITION_PROMPT
 }
 
-model User {
-  id             String   @id @default(cuid())
-  email          String   @unique
-  passwordHash   String
-  displayName    String?
-  nativeLanguage LanguageCode?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+enum ReviewState {
+  PENDING
+  APPROVED
+  REJECTED
+  EDITED
+}
 
-  progresses UserLanguageProgress[]
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  passwordHash   String?
+  displayName    String?
+  googleId       String?      @unique
+  avatarUrl      String?
+  nativeLanguage LanguageCode?
+  isAdmin        Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  sessions     AuthSession[]
+  progresses   UserLanguageProgress[]
+  lessonProgress UserLessonProgress[]
+  vocabularyProgress UserVocabularyProgress[]
+  contentReviews ContentReview[]
+}
+
+model AuthSession {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
 }
 
 model Language {
@@ -58,7 +85,9 @@ model Language {
   script      String
   isActive    Boolean      @default(true)
 
-  lessons Lesson[]
+  lessons    Lesson[]
+  mediaRecs  MediaRecommendation[]
+  aiGenerations AiGeneration[]
 }
 
 model Stage {
@@ -95,13 +124,16 @@ model Lesson {
   stageId     Int
   title       String
   description String?
+  subtitle    String?
+  estimatedMinutes Int?
   status      LessonStatus @default(DRAFT)
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
 
-  stage    Stage    @relation(fields: [stageId], references: [id])
-  languageRef Language @relation(fields: [language], references: [code])
-  steps    LessonStep[]
+  stage       Stage       @relation(fields: [stageId], references: [id])
+  languageRef Language     @relation(fields: [language], references: [code])
+  steps       LessonStep[]
+  userProgress UserLessonProgress[]
 }
 
 model LessonStep {
@@ -118,16 +150,65 @@ model LessonStep {
   @@unique([lessonId, order])
 }
 
+model UserLessonProgress {
+  id        String       @id @default(cuid())
+  userId    String
+  lessonId  String
+  completed Boolean      @default(false)
+  score     Float?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model VocabularyItem {
+  id              String       @id @default(cuid())
+  language        LanguageCode
+  term            String
+  translation     String
+  concept         String
+  pronunciationHint String?
+  stageSlug       String
+  createdAt       DateTime     @default(now())
+
+  userProgress UserVocabularyProgress[]
+
+  @@index([language, stageSlug])
+}
+
+model UserVocabularyProgress {
+  id              String   @id @default(cuid())
+  userId          String
+  vocabularyId    String
+  mastered        Boolean  @default(false)
+  reviewCount     Int      @default(0)
+  lastReviewedAt  DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  vocabulary VocabularyItem @relation(fields: [vocabularyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, vocabularyId])
+}
+
 model MediaRecommendation {
   id           String       @id @default(cuid())
   language     LanguageCode
   title        String
   mediaType    String
   reason       String
+  challenge    String?
   affiliateUrl String?
   stageHintId  Int?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
+
+  languageRef Language @relation(fields: [language], references: [code])
 }
 
 model AiGeneration {
@@ -137,7 +218,25 @@ model AiGeneration {
   kind        ContentKind
   prompt      String
   output      Json
-  reviewState String      @default("pending")
+  reviewState ReviewState @default(PENDING)
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+
+  languageRef Language @relation(fields: [language], references: [code])
+  review       ContentReview?
+}
+
+model ContentReview {
+  id              String      @id @default(cuid())
+  aiGenerationId  String      @unique
+  reviewerId      String?
+  reviewNotes     String?
+  reviewState     ReviewState @default(PENDING)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  aiGeneration AiGeneration @relation(fields: [aiGenerationId], references: [id], onDelete: Cascade)
+  reviewer     User?        @relation(fields: [reviewerId], references: [id])
+
+  @@index([reviewState])
 }

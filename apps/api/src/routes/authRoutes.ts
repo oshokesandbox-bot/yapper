@@ -1,9 +1,11 @@
 import { Router } from "express";
-import { getMe, login, signup } from "../controllers/authController.js";
-import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { signup, login, refresh, logout, me } from "../controllers/authController.js";
+import { requireAuth } from "../middlewares/auth.js";
 
 export const authRoutes = Router();
 
-authRoutes.post("/api/auth/signup", signup);
-authRoutes.post("/api/auth/login", login);
-authRoutes.get("/api/auth/me", authMiddleware, getMe);
+authRoutes.post("/auth/signup", signup);
+authRoutes.post("/auth/login", login);
+authRoutes.post("/auth/refresh", refresh);
+authRoutes.post("/auth/logout", logout);
+authRoutes.get("/auth/me", requireAuth, me);

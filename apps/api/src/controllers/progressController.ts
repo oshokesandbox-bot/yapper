@@ -1,127 +1,111 @@
 import type { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
 import { z } from "zod";
+import { getPrisma, isDbAvailable } from "../services/prisma.js";
+import { languageCodeSchema } from "@yapper/shared";
 
-const prisma = new PrismaClient();
-
-const languageCodeSchema = z.enum(["EN", "FR", "ES", "DE", "RU"]);
-
-const lessonProgressSchema = z.object({
+const updateProgressSchema = z.object({
   language: languageCodeSchema,
-  lessonId: z.string().min(1)
+  stageSlug: z.string(),
+  lessonId: z.string().optional(),
+  completed: z.boolean().optional(),
+  score: z.number().min(0).max(100).optional()
 });
 
-const stageProgressSchema = z.object({
-  language: languageCodeSchema,
-  stageId: z.coerce.number().int().positive()
-});
+function toPrismaLang(language: string): "EN" | "FR" | "ES" | "DE" | "RU" {
+  return language.toUpperCase() as "EN" | "FR" | "ES" | "DE" | "RU";
+}
 
 export async function getProgress(req: Request, res: Response) {
-  const userId = req.user?.id;
-  if (!userId) {
-    res.status(401).json({
-      error: { code: "UNAUTHORIZED", message: "Not authenticated" }
-    });
+  if (!req.user) {
+    res.status(401).json({ error: { code: "UNAUTHORIZED", message: "Not authenticated" } });
     return;
   }
 
-  const language = req.query.language;
-  const parsedLanguage = typeof language === "string" ? languageCodeSchema.safeParse(language.toUpperCase()) : null;
+  if (!isDbAvailable()) {
+    res.json({ progress: [] });
+    return;
+  }
 
-  const where = parsedLanguage?.success
-    ? { userId, language: parsedLanguage.data }
-    : { userId };
+  const prisma = getPrisma();
+  const userId = req.user.userId;
 
-  const progresses = await prisma.userLanguageProgress.findMany({
-    where,
+  const languageProgress = await prisma.userLanguageProgress.findMany({
+    where: { userId },
     include: { currentStage: true }
   });
 
-  res.json({ progresses });
-}
-
-export async function saveLessonProgress(req: Request, res: Response) {
-  const userId = req.user?.id;
-  if (!userId) {
-    res.status(401).json({
-      error: { code: "UNAUTHORIZED", message: "Not authenticated" }
-    });
-    return;
-  }
-
-  const parsed = lessonProgressSchema.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({
-      error: { code: "VALIDATION_ERROR", message: "Invalid request body", issues: parsed.error.issues }
-    });
-    return;
-  }
-
-  const { language, lessonId } = parsed.data;
-
-  const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
-  if (!lesson) {
-    res.status(404).json({
-      error: { code: "LESSON_NOT_FOUND", message: "Lesson not found" }
-    });
-    return;
-  }
-
-  // Upsert progress — create if not exists, update stage if needed
-  const progress = await prisma.userLanguageProgress.upsert({
-    where: { userId_language: { userId, language } },
-    update: {
-      currentStageId: lesson.stageId,
-      stageProgress: { increment: 0.1 }
-    },
-    create: {
-      userId,
-      language,
-      currentStageId: lesson.stageId,
-      stageProgress: 0.1
-    }
+  const lessonProgress = await prisma.userLessonProgress.findMany({
+    where: { userId },
+    include: { lesson: true }
   });
 
-  res.json({ progress });
+  res.json({
+    progress: languageProgress,
+    completedLessons: lessonProgress
+  });
 }
 
-export async function updateStageProgress(req: Request, res: Response) {
-  const userId = req.user?.id;
-  if (!userId) {
-    res.status(401).json({
-      error: { code: "UNAUTHORIZED", message: "Not authenticated" }
-    });
+export async function updateProgress(req: Request, res: Response) {
+  if (!req.user) {
+    res.status(401).json({ error: { code: "UNAUTHORIZED", message: "Not authenticated" } });
     return;
   }
 
-  const parsed = stageProgressSchema.safeParse(req.body);
+  if (!isDbAvailable()) {
+    res.status(503).json({ error: { code: "DB_UNAVAILABLE", message: "Database is not available." } });
+    return;
+  }
+
+  const parsed = updateProgressSchema.safeParse(req.body);
   if (!parsed.success) {
-    res.status(400).json({
-      error: { code: "VALIDATION_ERROR", message: "Invalid request body", issues: parsed.error.issues }
-    });
+    res.status(400).json({ error: { code: "VALIDATION_ERROR", message: "Invalid progress data", issues: parsed.error.issues } });
     return;
   }
 
-  const { language, stageId } = parsed.data;
+  const { language, stageSlug, lessonId, completed, score } = parsed.data;
+  const prisma = getPrisma();
+  const userId = req.user.userId;
+  const langCode = toPrismaLang(language);
 
-  const stage = await prisma.stage.findUnique({ where: { id: stageId } });
+  // Find or create language progress
+  const stage = await prisma.stage.findUnique({ where: { slug: stageSlug } });
   if (!stage) {
-    res.status(404).json({
-      error: { code: "STAGE_NOT_FOUND", message: "Stage not found" }
-    });
+    res.status(400).json({ error: { code: "STAGE_NOT_FOUND", message: `Stage '${stageSlug}' not found` } });
     return;
   }
 
-  const progress = await prisma.userLanguageProgress.upsert({
-    where: { userId_language: { userId, language } },
-    update: { currentStageId: stageId },
-    create: {
-      userId,
-      language,
-      currentStageId: stageId,
-      stageProgress: 0
-    }
+  const existing = await prisma.userLanguageProgress.findUnique({
+    where: { userId_language: { userId, language: langCode } }
   });
 
-  res.json({ progress });
+  if (existing) {
+    await prisma.userLanguageProgress.update({
+      where: { userId_language: { userId, language: langCode } },
+      data: {
+        currentStageId: stage.id,
+        stageProgress: score != null ? score : existing.stageProgress
+      }
+    });
+  } else {
+    await prisma.userLanguageProgress.create({
+      data: {
+        userId,
+        language: langCode,
+        currentStageId: stage.id,
+        stageProgress: score ?? 0
+      }
+    });
+  }
+
+  // Track lesson completion
+  if (lessonId && completed) {
+    const scoreVal = score != null ? score : null;
+    await prisma.userLessonProgress.upsert({
+      where: { userId_lessonId: { userId, lessonId } },
+      update: { completed, score: scoreVal },
+      create: { userId, lessonId, completed, score: scoreVal }
+    });
+  }
+
+  res.json({ success: true });
 }

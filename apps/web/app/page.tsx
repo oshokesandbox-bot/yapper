@@ -11,7 +11,8 @@ export default function HomePage() {
         <div className="flex gap-4 text-sm text-slate-500">
           <Link href="/languages">Languages</Link>
           <Link href="/dashboard">Dashboard</Link>
-          <Link href="/onboarding">Start</Link>
+          <Link className="authLink" href="/auth/login">Log in</Link>
+          <Link className="button ghost" href="/auth/signup" style={{ padding: "6px 16px", fontSize: 14 }}>Sign up</Link>
         </div>
       </nav>
 
@@ -50,10 +51,11 @@ export default function HomePage() {
             ))}
           </div>
         </section>
-        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm grid gap-3">
           <p className="text-blue-600 font-black uppercase tracking-widest text-xs">Media angle</p>
-          <h2 className="text-2xl font-semibold mt-1">{seedRecommendations[0]?.title}</h2>
-          <p className="text-slate-400 text-sm mt-1">{seedRecommendations[0]?.reason}</p>
+          <h2 className="text-2xl font-semibold mt-0">{seedRecommendations[0]?.title}</h2>
+          <p className="text-slate-400 text-sm">{seedRecommendations[0]?.reason}</p>
+          <Link href="/recommendations" className="text-sm text-blue-600 hover:underline">Browse all recommendations &rarr;</Link>
         </section>
       </section>
     </main>

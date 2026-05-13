@@ -8,6 +8,7 @@ export default function DashboardPage() {
       <nav className="flex items-center justify-between gap-4 mb-10 max-sm:flex-col max-sm:items-start">
         <Link href="/" className="text-2xl font-black tracking-tighter">Yapper</Link>
         <div className="flex gap-4 text-sm text-slate-500">
+          <Link href="/recommendations">Recommendations</Link>
           <Link href="/onboarding">Onboarding</Link>
           <Link href="/languages">Languages</Link>
         </div>
