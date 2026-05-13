@@ -1,11 +1,10 @@
 import type { NextFunction, Request, Response } from "express";
-import { verifyAccessToken, type JwtPayload } from "../config/auth.js";
+import { verifyAccessToken } from "../config/auth.js";
+import type { JwtPayload } from "../config/auth.js";
 
-declare global {
-  namespace Express {
-    interface Request {
-      user?: JwtPayload;
-    }
+declare module "express" {
+  interface Request {
+    user?: JwtPayload;
   }
 }
 
