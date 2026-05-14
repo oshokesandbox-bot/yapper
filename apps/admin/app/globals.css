@@ -5,3 +5,8 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; }
+
+.sidebar-link:hover {
+  background: #33415550 !important;
+  color: #e2e8f0 !important;
+}

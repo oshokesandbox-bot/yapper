@@ -4,16 +4,17 @@ const isGithubPages = process.env.GITHUB_PAGES === "true";
 const repoBasePath = "/yapper";
 
 const nextConfig: NextConfig = {
-  output: "export",
   trailingSlash: true,
-  images: {
-    unoptimized: true
-  },
   typescript: {
     ignoreBuildErrors: true
   },
   transpilePackages: ["@yapper/shared", "@yapper/ui"],
-  ...(isGithubPages ? { basePath: repoBasePath, assetPrefix: repoBasePath } : {})
+  ...(isGithubPages ? {
+    output: "export",
+    basePath: repoBasePath,
+    assetPrefix: repoBasePath,
+    images: { unoptimized: true }
+  } : {})
 };
 
 export default nextConfig;
